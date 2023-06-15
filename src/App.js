@@ -1,14 +1,39 @@
-import logo from "./logo.svg";
+import React, { useState } from "react";
 import "./App.css";
 
 function App() {
+  const [results, setResults] = useState([]);
+
+  const checkInclusiveWords = async (event) => {
+    event.preventDefault();
+
+    const inputString = document.getElementById("prompt").value;
+
+    try {
+      const response = await fetch("http://localhost:8080/check-inclusive-words", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(inputString),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setResults(data);
+      } else {
+        console.log("Error:", response.status);
+      }
+    } catch (error) {
+      console.log("Error:", error);
+    }
+  };
+
   return (
     <>
       <meta charSet="UTF-8" />
       <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <link rel="stylesheet" href="css/style.css" />
-      <link rel="stylesheet" href="css/spinner.css" />
       <title>Croud</title>
       <header>
         <div className="navbar">
@@ -30,7 +55,7 @@ function App() {
           equal phrasing. Casey is free to use, empowering you to enhance
           inclusivity in your day-to-day writing.
         </p>
-        <form id="image-form">
+        <form id="image-form" onSubmit={checkInclusiveWords}>
           <input
             type="text"
             placeholder="Enter Text"
@@ -41,23 +66,34 @@ function App() {
             <button type="submit" className="btn">
               Check In
             </button>
-            <button type="submit" className="btn">
+            <button type="reset" className="btn">
               Reset
             </button>
           </div>
         </form>
-        <div classname="display">
-          <p>
-            <span id="error-word" classname="error">
-              abc
-            </span>
-            <span id="reason" classname="reason">
-              def
-            </span>
-            <span id="correct-word" classname="correct">
-              ghi
-            </span>
-          </p>
+        <div className="display">
+          {results.length === 0 ? (
+            <p>No inclusive words found.</p>
+          ) : (
+            <table>
+              {/* <thead>
+                <tr>
+                  <th>Inclusive Word</th>
+                  <th>Description</th>
+                  <th>Alternate Words</th>
+                </tr>
+              </thead> */}
+              <tbody>
+                {results.map((result, index) => (
+                  <tr key={index}>
+                    <td><span className="inclusive-word bold">{result.inclusiveWord}</span></td>
+                    <td><span className="description">{result.description}</span></td>
+                    <td><span className="alternate-word">{result.alternateWords}</span></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </main>
     </>

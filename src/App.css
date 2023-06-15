@@ -200,3 +200,21 @@ img {
     color: #ced4da;
     font-weight: bold;
   }
+
+  .inclusive-word {
+    color: red;
+  }
+  
+  .bold {
+    font-weight: bold;
+  }
+  
+  .alternate-word {
+    color: green;
+  }
+  
+  .description {
+    margin: 0 5px;
+  }
+  
+  
